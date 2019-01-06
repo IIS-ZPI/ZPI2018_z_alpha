@@ -1,8 +1,7 @@
 language: java
-jdk: 
-  - oraclejdk8
-deploy:
-  provider: releases
-  api_key: $TOKEN
-  skip_cleanup: true
-  file_glob: "true"
+
+before_install:
+  - chmod +x gradlew
+
+jdk:
+  - oraclejdk11
