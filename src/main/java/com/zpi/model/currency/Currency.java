@@ -1,12 +1,21 @@
 package com.zpi.model.currency;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Currency {
+
     private String name;
+
     private String code;
+
     private double mid;
 
     @JsonProperty("currency")

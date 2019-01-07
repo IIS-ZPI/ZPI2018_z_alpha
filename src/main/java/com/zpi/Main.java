@@ -1,6 +1,7 @@
 package com.zpi;
 
 import com.zpi.client.NbpRestClient;
+import com.zpi.client.NbpRestClientImpl;
 import com.zpi.model.currency.Currency;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -10,6 +11,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -19,7 +21,7 @@ public class Main extends Application {
 	private static final String DEFAULT_TABLE = "a";
 	private static final String DEFAULT_CURRENCY = "USD";
 
-	private NbpRestClient nbpRestClient = new NbpRestClient();
+	private NbpRestClient nbpRestClient = new NbpRestClientImpl();
 	private Scene scene;
 
 	@Override
