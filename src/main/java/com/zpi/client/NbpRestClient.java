@@ -1,6 +1,7 @@
 package com.zpi.client;
 
 
+import com.sun.deploy.util.StringUtils;
 import com.zpi.model.currency.Currency;
 import com.zpi.model.currency.CurrencyTable;
 import com.zpi.model.rate.Rate;
@@ -29,6 +30,23 @@ public class NbpRestClient {
         return client
                 .target(BASE_URL)
                 .path("exchangerates/rates/" + table + "/" + code + "/last/" + last)
+                .request(MediaType.APPLICATION_JSON)
+                .get(RateTable.class)
+                .getRates();
+    }
+
+    /**
+     *
+     * @param table table from which data would be fetched, mostly a, could be b and c
+     * @param code currency code, mostly a 3-letter one like USD
+     * @param dateFrom as a String in form "YYYY-MM-DD"
+     * @param dateTo as a String in form "YYYY-MM-DD"
+     */
+
+    public List<Rate> getRatesForDatePeriod(String table, String code, String dateFrom, String dateTo) {
+        return client
+                .target(BASE_URL)
+                .path("exchangerates/rates/" + table + "/" + code + "/" + dateFrom + "/" + dateTo)
                 .request(MediaType.APPLICATION_JSON)
                 .get(RateTable.class)
                 .getRates();
