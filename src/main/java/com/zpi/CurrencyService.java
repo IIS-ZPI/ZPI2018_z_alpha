@@ -8,6 +8,7 @@ import com.zpi.model.rate.TimePeriod;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -60,14 +61,15 @@ public class CurrencyService {
         return format.format(date);
     }
 
-    public double getMeanRateOfCurrencyForTimePeriod(String code, TimePeriod timePeriod) {
+    public double getMedianRateOfCurrencyForTimePeriod(String code, TimePeriod timePeriod) {
         List<Rate> rates = getRatesForTimePeriod(code, timePeriod);
-        double mean = 0.0;
+        List<Double> rateValues = new ArrayList<>();
         int count = 0;
         for (Rate rate: rates) {
             count ++;
-            mean = +rate.getMid();
+            rateValues.add(rate.getMid());
         }
-        return mean/count;
+        Collections.sort(rateValues);
+        return count % 2 > 0 ? rateValues.get((count /2) + 1) : rateValues.get(((count /2) + ((count/2)+1)) / 2);
     }
 }
