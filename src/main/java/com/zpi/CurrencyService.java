@@ -1,14 +1,13 @@
 package com.zpi;
 
 import com.zpi.client.NbpRestClient;
+import com.zpi.client.NbpRestClientImpl;
 import com.zpi.model.currency.Currency;
 import com.zpi.model.rate.Rate;
 import com.zpi.model.rate.TimePeriod;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,14 +17,19 @@ public class CurrencyService {
     public static final long MONTH_TIME_MILLIS = 2592000000L;
     public static final long YEAR_TIME_MILLIS = 31556952000L;
     public static final String DATE_PATTERN = "yyyy-MM-dd";
-    private NbpRestClient nbpRestClient = new NbpRestClient();
+
+    private NbpRestClient nbpRestClient;
+
+    public CurrencyService(NbpRestClient nbpRestClient) {
+        this.nbpRestClient = nbpRestClient;
+    }
 
     public List<Currency> getCurrencies() {
         List<Currency> currencies = nbpRestClient.getAvailableCurrencies("a");
         return currencies;
     }
 
-    private List<Rate> getRatesForTimePeriod(String code, TimePeriod timePeriod) {
+    public List<Rate> getRatesForTimePeriod(String code, TimePeriod timePeriod) {
         List<Rate> rates = new ArrayList<>();
         switch (timePeriod) {
             case WEEK:
@@ -66,5 +70,4 @@ public class CurrencyService {
         }
         return mean/count;
     }
-
 }
