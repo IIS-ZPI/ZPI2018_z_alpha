@@ -29,22 +29,22 @@ public class CurrencyService {
         List<Rate> rates = new ArrayList<>();
         switch (timePeriod) {
             case WEEK:
-                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date()), prepareDate(new Date(new Date().getTime() - WEEK_TIME_MILLIS)));
+                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date(new Date().getTime() - WEEK_TIME_MILLIS)), prepareDate(new Date()));
                 break;
             case TWO_WEEKS:
-                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date()), prepareDate(new Date(new Date().getTime() - WEEK_TIME_MILLIS*2)));
+                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date(new Date().getTime() - WEEK_TIME_MILLIS*2)), prepareDate(new Date()));
                 break;
             case MONTH:
-                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date()), prepareDate(new Date(new Date().getTime() - MONTH_TIME_MILLIS)));
+                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date(new Date().getTime() - MONTH_TIME_MILLIS)), prepareDate(new Date()));
                 break;
             case QUARTER:
-                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date()), prepareDate(new Date(new Date().getTime() - MONTH_TIME_MILLIS*3)));
+                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date(new Date().getTime() - MONTH_TIME_MILLIS*3)), prepareDate(new Date()));
                 break;
             case HALF_A_YEAR:
-                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date()), prepareDate(new Date(new Date().getTime() - MONTH_TIME_MILLIS*6)));
+                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date(new Date().getTime() - MONTH_TIME_MILLIS*6)), prepareDate(new Date()));
                 break;
             case YEAR:
-                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date()), prepareDate(new Date(new Date().getTime() - YEAR_TIME_MILLIS)));
+                rates = nbpRestClient.getRatesForDatePeriod("a", code, prepareDate(new Date(new Date().getTime() - YEAR_TIME_MILLIS)), prepareDate(new Date()));
                 break;
             default : break;
         }
