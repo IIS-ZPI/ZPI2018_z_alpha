@@ -30,7 +30,7 @@ public class CurrencyServiceTest {
 
         List<Currency> result = currencyService.getCurrencies();
 
-        Assert.assertNotNull(null);
+        Assert.assertNotNull(result);
     }
 
     private List<Currency> getCurrenciesMock() {
