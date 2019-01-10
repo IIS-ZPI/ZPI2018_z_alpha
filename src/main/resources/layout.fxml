@@ -4,55 +4,75 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
-      <HBox prefHeight="50.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox prefHeight="80.0" prefWidth="200.0" spacing="8.0">
          <children>
-            <HBox>
+            <VBox prefHeight="200.0" prefWidth="200.0" spacing="4.0">
                <children>
-                  <VBox prefHeight="200.0" prefWidth="200.0">
+                  <Label alignment="CENTER" text="Waluta" />
+                  <ChoiceBox id="choicebox_currencies" prefWidth="200.0" />
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="200.0" spacing="4.0">
+               <children>
+                  <Label text="Przedział czasowy" />
+                  <ChoiceBox id="choicebox_time_periods" prefWidth="200.0" />
+               </children>
+            </VBox>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="8.0" left="8.0" top="16.0" />
+         </padding>
+      </HBox>
+      <TabPane prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="Wykres">
+               <content>
+                  <VBox alignment="TOP_RIGHT" prefWidth="800.0">
                      <children>
-                        <Label prefWidth="180.0" text="Wybierz walutę" textAlignment="JUSTIFY">
+                        <LineChart id="linechart_currency_rates" createSymbols="false" legendSide="RIGHT" prefWidth="800.0">
+                           <xAxis>
+                              <CategoryAxis side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis forceZeroInRange="false" side="LEFT" />
+                           </yAxis>
                            <VBox.margin>
-                              <Insets />
+                              <Insets top="8.0" />
                            </VBox.margin>
+                        </LineChart>
+                        <HBox alignment="CENTER" prefWidth="600.0" spacing="32.0">
+                           <children>
+                              <CheckBox id="checkbox_median" mnemonicParsing="false" text="Mediana" />
+                              <CheckBox id="checkbox_dominant" mnemonicParsing="false" text="Dominanta" />
+                              <CheckBox id="checkbox_standard_deviation" mnemonicParsing="false" text="Odchylenie standardowe" />
+                              <CheckBox id="checkbox_coefficient_of_variation" mnemonicParsing="false" text="Współczynnik zmienności" />
+                           </children>
                            <padding>
-                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                           </padding>
-                           <font>
-                              <Font size="14.0" />
-                           </font></Label>
-                        <ChoiceBox fx:id="choice_currencies" prefWidth="300.0">
-                           <padding>
-                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                           </padding>
+                              <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                           </padding></HBox>
+                        <Button mnemonicParsing="false" text="Eksportuj do pliku csv">
                            <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </ChoiceBox>
+                              <Insets bottom="8.0" right="8.0" top="8.0" />
+                           </VBox.margin></Button>
                      </children>
                   </VBox>
-               </children></HBox>
-         </children>
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding></HBox>
-   </top>
-   <center>
-      <LineChart fx:id="chart_currency_rates" BorderPane.alignment="CENTER">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" forceZeroInRange="false"/>
-        </yAxis>
-      </LineChart>
-   </center>
-</BorderPane>
+               </content></Tab>
+            <Tab text="Tabela" />
+         </tabs>
+      </TabPane>
+   </children>
+</VBox>

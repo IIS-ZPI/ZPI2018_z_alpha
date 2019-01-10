@@ -1,10 +1,9 @@
-package com.zpi;
+package com.zpi.service;
 
 import com.zpi.client.NbpRestClient;
-import com.zpi.client.NbpRestClientImpl;
 import com.zpi.model.currency.Currency;
 import com.zpi.model.rate.Rate;
-import com.zpi.model.rate.TimePeriod;
+import lombok.Getter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +19,8 @@ public class CurrencyService {
     public static final String DATE_PATTERN = "yyyy-MM-dd";
 
     private NbpRestClient nbpRestClient;
+    @Getter
+    private List<Rate> cachedRates;
 
     public CurrencyService(NbpRestClient nbpRestClient) {
         this.nbpRestClient = nbpRestClient;
@@ -53,6 +54,7 @@ public class CurrencyService {
                 break;
             default : break;
         }
+        cachedRates = rates;
         return rates;
     }
 
@@ -63,6 +65,10 @@ public class CurrencyService {
 
     public double getMedianRateOfCurrencyForTimePeriod(String code, TimePeriod timePeriod) {
         List<Rate> rates = getRatesForTimePeriod(code, timePeriod);
+        return calculateMedian(rates);
+    }
+
+    public double calculateMedian(List<Rate> rates) {
         List<Double> rateValues = new ArrayList<>();
         int count = 0;
         for (Rate rate: rates) {
@@ -71,5 +77,20 @@ public class CurrencyService {
         }
         Collections.sort(rateValues);
         return count % 2 > 0 ? rateValues.get((count /2) + 1) : rateValues.get(((count /2) + ((count/2)+1)) / 2);
+    }
+
+    public double calculateDominant(List<Rate> rates) {
+        // TODO Jerry's implementation here
+        return calculateMedian(rates) - 0.1;
+    }
+
+    public double calculateStandardVariation(List<Rate> rates) {
+        // TODO Jerry's implementation here
+        return calculateMedian(rates) - 0.2;
+    }
+
+    public double calculateCoefficientOfVariation(List<Rate> rates) {
+        // TODO Jerry's implementation here
+        return calculateMedian(rates) - 0.3;
     }
 }
