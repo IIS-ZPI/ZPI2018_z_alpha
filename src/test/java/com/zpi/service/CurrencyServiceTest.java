@@ -1,8 +1,8 @@
-package com.zpi;
+package com.zpi.service;
 
 import com.zpi.client.NbpRestClient;
 import com.zpi.model.currency.Currency;
-import com.zpi.service.CurrencyService;
+import com.zpi.model.rate.Rate;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,5 +39,27 @@ public class CurrencyServiceTest {
         currencies.add(Currency.builder().name("dolar amerykański").code("USD").mid(3.75).build());
         currencies.add(Currency.builder().name("korona czeska").code("PLN").mid(0.16).build());
         return currencies;
+    }
+
+    @Test
+    public void calculateSessionsTest() {
+        SessionsDataPack sessionsDataPack = currencyService.calculateSessions(getRatesMock());
+        Assert.assertEquals(3, sessionsDataPack.riseSessions);
+        Assert.assertEquals(2, sessionsDataPack.fallSessions);
+        Assert.assertEquals(2, sessionsDataPack.unchangedSessions);
+    }
+
+    private List<Rate> getRatesMock() {
+        List<Rate> rates = new ArrayList<>();
+        rates.add(Rate.builder().mid(1.0).build());
+        rates.add(Rate.builder().mid(2.0).build());
+        rates.add(Rate.builder().mid(5.0).build());
+        rates.add(Rate.builder().mid(3.0).build());
+        rates.add(Rate.builder().mid(4.0).build());
+        rates.add(Rate.builder().mid(4.0).build());
+        rates.add(Rate.builder().mid(2.0).build());
+        rates.add(Rate.builder().mid(3.0).build());
+        rates.add(Rate.builder().mid(3.0).build());
+        return rates;
     }
 }

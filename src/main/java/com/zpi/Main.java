@@ -5,14 +5,19 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import com.zpi.client.NbpRestClientImpl;
 import com.zpi.model.currency.Currency;
 import com.zpi.model.rate.Rate;
 import com.zpi.service.CurrencyService;
+import com.zpi.service.SessionsDataPack;
 import com.zpi.service.TimePeriod;
 
 import java.io.IOException;
@@ -21,25 +26,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Main extends Application {
-	private static final int SCENE_WIDTH = 1200;
+	private static final int SCENE_WIDTH = 1000;
 	private static final int SCENE_HEIGHT = 600;
 	private static final String DEFAULT_CURRENCY = "USD";
 	private static final String TITLE = "Kursy walut";
 
 	private static final String SERIES_MEDIAN = "mediana";
 	private static final String SERIES_DOMINANT = "dominanta";
-	private static final String SERIES_STANDARD_VARTIAION = "odchylenie standardowe";
-	private static final String SERIES_COEFFICIENT_OF_VARIATION = "wspólczynnik zmienności";
+	private static final String SERIES_STANDARD_VARIATION = "odchylenie standardowe";
 
 	private CurrencyService currencyService = new CurrencyService(new NbpRestClientImpl());
 
 	private LineChart<String, Double> lineChart;
+	private PieChart pieChart;
 	private ChoiceBox<Currency> choiceBoxCurrencies;
 	private ChoiceBox<TimePeriod> choiceBoxDates;
 	private CheckBox checkBoxMedian;
 	private CheckBox checkBoxDominant;
 	private CheckBox checkBoxStandardVariation;
-	private CheckBox checkBoxCoefficientOfVariation;
+	private Label labelCoefficientOfVariation;
+	private Polygon polygonCoefficientOfVariation;
+	private Label labelRiseSessions;
+	private Label labelFallSessions;
+	private Label labelUnchangedSessions;
 
 	@Override
 	public void start(Stage stage) throws IOException {
@@ -63,12 +72,17 @@ public class Main extends Application {
 
 	private void bindControls(Scene scene) {
 		lineChart = (LineChart<String, Double>) scene.lookup("#linechart_currency_rates");
+		pieChart = (PieChart) scene.lookup("#piechart_sessions");
 		choiceBoxCurrencies = (ChoiceBox<Currency>) scene.lookup("#choicebox_currencies");
 		choiceBoxDates = (ChoiceBox<TimePeriod>) scene.lookup("#choicebox_time_periods");
 		checkBoxMedian = (CheckBox) scene.lookup("#checkbox_median");
 		checkBoxDominant = (CheckBox)  scene.lookup("#checkbox_dominant");
-		checkBoxStandardVariation = (CheckBox)  scene.lookup("#checkbox_standard_deviation");
-		checkBoxCoefficientOfVariation = (CheckBox)  scene.lookup("#checkbox_coefficient_of_variation");
+		checkBoxStandardVariation = (CheckBox) scene.lookup("#checkbox_standard_deviation");
+		labelCoefficientOfVariation = (Label) scene.lookup("#label_coefficient_of_variation");
+		polygonCoefficientOfVariation = (Polygon) scene.lookup("#polygon_coefficient_of_variation");
+		labelRiseSessions = (Label) scene.lookup("#label_rise_sessions");
+		labelFallSessions = (Label) scene.lookup("#label_fall_sessions");
+		labelUnchangedSessions = (Label) scene.lookup("#label_unchanged_sessions");
 	}
 
 	private void initControls() {
@@ -80,7 +94,6 @@ public class Main extends Application {
 		checkBoxMedian.selectedProperty().addListener((observable, oldValue, newValue) -> updateMedian());
 		checkBoxDominant.selectedProperty().addListener((observable, oldValue, newValue) ->  updateDominant());
 		checkBoxStandardVariation.selectedProperty().addListener((observable, oldValue, newValue) -> updateStandardVariation());
-		checkBoxCoefficientOfVariation.selectedProperty().addListener((observable, oldValue, newValue) -> updateCoefficientOfVariation());
 	}
 
 	private void initChoiceBoxes() {
@@ -111,8 +124,8 @@ public class Main extends Application {
 		TimePeriod timePeriod = choiceBoxDates.getValue();
 		lineChart.getData().add(createSeries(currency.getName(), fetchData(currency, timePeriod)));
 		updateStatisticSeries();
+		updateCoefficientOfVariation();
 	}
-
 	private XYChart.Series<String, Double> createSeries(String name, List<XYChart.Data<String, Double>> ratesData) {
 		XYChart.Series<String, Double> series = new XYChart.Series<>(FXCollections.observableArrayList(ratesData));
 		series.setName(name);
@@ -123,7 +136,19 @@ public class Main extends Application {
 		updateMedian();
 		updateDominant();
 		updateStandardVariation();
-		updateCoefficientOfVariation();
+		updateSessions();
+	}
+
+	private void updateSessions() {
+		List<Rate> cachedRates = currencyService.getCachedRates();
+		pieChart.getData().clear();
+		SessionsDataPack sessionsDataPack = currencyService.calculateSessions(cachedRates);
+		pieChart.getData().add(new PieChart.Data("Sesje wzrostowe", sessionsDataPack.getRiseSessions()));
+		pieChart.getData().add(new PieChart.Data("Sesje spadkowe", sessionsDataPack.getFallSessions()));
+		pieChart.getData().add(new PieChart.Data("Sesje bez zmian", sessionsDataPack.getUnchangedSessions()));
+		labelRiseSessions.setText(sessionsDataPack.getRiseSessions() + "");
+		labelFallSessions.setText(sessionsDataPack.getFallSessions() + "");
+		labelUnchangedSessions.setText(sessionsDataPack.getUnchangedSessions() + "");
 	}
 
 	private void updateMedian() {
@@ -150,20 +175,19 @@ public class Main extends Application {
 		if (checkBoxStandardVariation.isSelected()) {
 			List<Rate> cachedRates = currencyService.getCachedRates();
 			double value = currencyService.calculateStandardVariation(cachedRates);
-			lineChart.getData().add(createValueMarkerSeries(SERIES_STANDARD_VARTIAION, cachedRates, value));
+			lineChart.getData().add(createValueMarkerSeries(SERIES_STANDARD_VARIATION, cachedRates, value));
 		} else {
-			removeStatisticSeries(SERIES_STANDARD_VARTIAION);
+			removeStatisticSeries(SERIES_STANDARD_VARIATION);
 		}
 	}
 
 	private void updateCoefficientOfVariation() {
-		if (checkBoxCoefficientOfVariation.isSelected()) {
-			List<Rate> cachedRates = currencyService.getCachedRates();
-			double value = currencyService.calculateCoefficientOfVariation(currencyService.getCachedRates());
-			lineChart.getData().add(createValueMarkerSeries(SERIES_COEFFICIENT_OF_VARIATION, cachedRates, value));
-		} else {
-			removeStatisticSeries(SERIES_COEFFICIENT_OF_VARIATION);
-		}
+		List<Rate> cachedRates = currencyService.getCachedRates();
+		double value = currencyService.calculateCoefficientOfVariation(cachedRates);
+		polygonCoefficientOfVariation.setRotate(value >= 0 ? 0 : 180);
+		polygonCoefficientOfVariation.setFill(value >= 0 ? Paint.valueOf("lime") : Paint.valueOf("red"));
+		labelCoefficientOfVariation.setTextFill(value >= 0 ? Paint.valueOf("green") : Paint.valueOf("red"));
+		labelCoefficientOfVariation.setText(String.format("%.3f", value));
 	}
 
 	private XYChart.Series<String, Double> createValueMarkerSeries(String name, List<Rate> cachedRates, double value) {
