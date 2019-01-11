@@ -1,8 +1,11 @@
-package com.zpi;
+package com.zpi.service;
 
 import com.zpi.client.NbpRestClient;
 import com.zpi.model.currency.Currency;
+import com.zpi.model.rate.Rate;
 import com.zpi.service.CurrencyService;
+import com.zpi.service.SessionsDataPack;
+import com.zpi.service.TimePeriod;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
