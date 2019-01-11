@@ -33,7 +33,6 @@ public class Main extends Application {
 
 	private static final String SERIES_MEDIAN = "mediana";
 	private static final String SERIES_DOMINANT = "dominanta";
-	private static final String SERIES_STANDARD_VARIATION = "odchylenie standardowe";
 
 	private CurrencyService currencyService = new CurrencyService(new NbpRestClientImpl());
 
@@ -43,8 +42,10 @@ public class Main extends Application {
 	private ChoiceBox<TimePeriod> choiceBoxDates;
 	private CheckBox checkBoxMedian;
 	private CheckBox checkBoxDominant;
-	private CheckBox checkBoxStandardVariation;
 	private Label labelCoefficientOfVariation;
+	private Label labelMedian;
+	private Label labelDominant;
+	private Label labelStandardVariation;
 	private Polygon polygonCoefficientOfVariation;
 	private Label labelRiseSessions;
 	private Label labelFallSessions;
@@ -77,8 +78,10 @@ public class Main extends Application {
 		choiceBoxDates = (ChoiceBox<TimePeriod>) scene.lookup("#choicebox_time_periods");
 		checkBoxMedian = (CheckBox) scene.lookup("#checkbox_median");
 		checkBoxDominant = (CheckBox)  scene.lookup("#checkbox_dominant");
-		checkBoxStandardVariation = (CheckBox) scene.lookup("#checkbox_standard_deviation");
 		labelCoefficientOfVariation = (Label) scene.lookup("#label_coefficient_of_variation");
+		labelMedian = (Label) scene.lookup("#label_median");
+		labelDominant = (Label) scene.lookup("#label_dominant");
+		labelStandardVariation = (Label) scene.lookup("#label_standard_variation");
 		polygonCoefficientOfVariation = (Polygon) scene.lookup("#polygon_coefficient_of_variation");
 		labelRiseSessions = (Label) scene.lookup("#label_rise_sessions");
 		labelFallSessions = (Label) scene.lookup("#label_fall_sessions");
@@ -93,7 +96,6 @@ public class Main extends Application {
 	private void initCheckBoxes() {
 		checkBoxMedian.selectedProperty().addListener((observable, oldValue, newValue) -> updateMedian());
 		checkBoxDominant.selectedProperty().addListener((observable, oldValue, newValue) ->  updateDominant());
-		checkBoxStandardVariation.selectedProperty().addListener((observable, oldValue, newValue) -> updateStandardVariation());
 	}
 
 	private void initChoiceBoxes() {
@@ -152,9 +154,10 @@ public class Main extends Application {
 	}
 
 	private void updateMedian() {
+		List<Rate> cachedRates = currencyService.getCachedRates();
+		double value = currencyService.calculateMedian(cachedRates);
+		labelMedian.setText(String.format("%.4f", value));
 		if (checkBoxMedian.isSelected()) {
-			List<Rate> cachedRates = currencyService.getCachedRates();
-			double value = currencyService.calculateMedian(cachedRates);
 			lineChart.getData().add(createValueMarkerSeries(SERIES_MEDIAN, cachedRates, value));
 		} else {
 			removeStatisticSeries(SERIES_MEDIAN);
@@ -162,9 +165,10 @@ public class Main extends Application {
 	}
 
 	private void updateDominant() {
+		List<Rate> cachedRates = currencyService.getCachedRates();
+		double value = currencyService.calculateDominant(cachedRates);
+		labelDominant.setText(String.format("%.4f", value));
 		if (checkBoxDominant.isSelected()) {
-			List<Rate> cachedRates = currencyService.getCachedRates();
-			double value = currencyService.calculateDominant(cachedRates);
 			lineChart.getData().add(createValueMarkerSeries(SERIES_DOMINANT, cachedRates, value));
 		} else {
 			removeStatisticSeries(SERIES_DOMINANT);
@@ -172,13 +176,9 @@ public class Main extends Application {
 	}
 
 	private void updateStandardVariation() {
-		if (checkBoxStandardVariation.isSelected()) {
-			List<Rate> cachedRates = currencyService.getCachedRates();
-			double value = currencyService.calculateStandardDeviation(cachedRates);
-			lineChart.getData().add(createValueMarkerSeries(SERIES_STANDARD_VARIATION, cachedRates, value));
-		} else {
-			removeStatisticSeries(SERIES_STANDARD_VARIATION);
-		}
+		List<Rate> cachedRates = currencyService.getCachedRates();
+		double value = currencyService.calculateStandardDeviation(cachedRates);
+		labelStandardVariation.setText(String.format("%.4f", value));
 	}
 
 	private void updateCoefficientOfVariation() {
@@ -187,7 +187,7 @@ public class Main extends Application {
 		polygonCoefficientOfVariation.setRotate(value >= 0 ? 0 : 180);
 		polygonCoefficientOfVariation.setFill(value >= 0 ? Paint.valueOf("lime") : Paint.valueOf("red"));
 		labelCoefficientOfVariation.setTextFill(value >= 0 ? Paint.valueOf("green") : Paint.valueOf("red"));
-		labelCoefficientOfVariation.setText(String.format("%.3f", value) + "%");
+		labelCoefficientOfVariation.setText(String.format("%.4f", value) + "%");
 	}
 
 	private XYChart.Series<String, Double> createValueMarkerSeries(String name, List<Rate> cachedRates, double value) {
