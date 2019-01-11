@@ -76,9 +76,39 @@ public class CurrencyService {
         return count % 2 > 0 ? rateValues.get((count /2)) : (rateValues.get((count /2)) + rateValues.get((count/2)-1)) / 2;
     }
 
-    public double calculateDominant(List<Rate> rates) {
-        // TODO Jerry's implementation here
-        return calculateMedian(rates) - 0.1;
+    public Double calculateDominant(List<Rate> rates) {
+        Map<Double, Integer> rateValues = new HashMap<>();
+        for (Rate rate: rates) {
+            if(!rateValues.isEmpty() && rateValues.containsKey(rate.getMid())){
+                int count = rateValues.get(rate.getMid());
+                rateValues.replace(rate.getMid(),count + 1);
+            } else {
+                rateValues.put(rate.getMid(), 0);
+            }
+        }
+        Map<Double, Integer> sortedValues = sortByValue(rateValues);
+        Map.Entry<Double, Integer> entry = sortedValues.entrySet().iterator().next();
+        return entry.getKey();
+    }
+
+    private static Map<Double, Integer> sortByValue(Map<Double, Integer> unsortMap) {
+
+        List<Map.Entry<Double, Integer>> list =
+                new LinkedList<>(unsortMap.entrySet());
+
+        Collections.sort(list, new Comparator<Map.Entry<Double, Integer>>() {
+            public int compare(Map.Entry<Double, Integer> o1,
+                               Map.Entry<Double, Integer> o2) {
+                return (o1.getValue()).compareTo(o2.getValue());
+            }
+        });
+
+        Map<Double, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Double, Integer> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
     }
 
     public double calculateStandardVariation(List<Rate> rates) {
