@@ -187,7 +187,7 @@ public class Main extends Application {
 		polygonCoefficientOfVariation.setRotate(value >= 0 ? 0 : 180);
 		polygonCoefficientOfVariation.setFill(value >= 0 ? Paint.valueOf("lime") : Paint.valueOf("red"));
 		labelCoefficientOfVariation.setTextFill(value >= 0 ? Paint.valueOf("green") : Paint.valueOf("red"));
-		labelCoefficientOfVariation.setText(String.format("%.3f", value));
+		labelCoefficientOfVariation.setText(String.format("%.3f", value) + "%");
 	}
 
 	private XYChart.Series<String, Double> createValueMarkerSeries(String name, List<Rate> cachedRates, double value) {

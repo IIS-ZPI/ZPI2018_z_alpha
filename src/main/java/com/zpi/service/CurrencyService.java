@@ -122,8 +122,8 @@ public class CurrencyService {
         return temp/(rates.size()-1);
     }
 
-    public double calculateCoefficientOfVariation(List<Rate> rates) {
-        return calculateStandardDeviation(rates) / calculateMean(rates);
+    public Double calculateCoefficientOfVariation(List<Rate> rates) {
+        return calculateStandardDeviation(rates) / calculateMean(rates) * 100;
     }
 
     public SessionsDataPack calculateSessions(List<Rate> rates) {
