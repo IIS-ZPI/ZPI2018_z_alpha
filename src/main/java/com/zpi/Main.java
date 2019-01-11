@@ -174,7 +174,7 @@ public class Main extends Application {
 	private void updateStandardVariation() {
 		if (checkBoxStandardVariation.isSelected()) {
 			List<Rate> cachedRates = currencyService.getCachedRates();
-			double value = currencyService.calculateStandardVariation(cachedRates);
+			double value = currencyService.calculateStandardDeviation(cachedRates);
 			lineChart.getData().add(createValueMarkerSeries(SERIES_STANDARD_VARIATION, cachedRates, value));
 		} else {
 			removeStatisticSeries(SERIES_STANDARD_VARIATION);

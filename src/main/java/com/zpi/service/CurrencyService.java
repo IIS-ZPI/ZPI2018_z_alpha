@@ -60,20 +60,14 @@ public class CurrencyService {
         return format.format(date);
     }
 
-    public double getMedianRateOfCurrencyForTimePeriod(String code, TimePeriod timePeriod) {
-        List<Rate> rates = getRatesForTimePeriod(code, timePeriod);
-        return calculateMedian(rates);
-    }
-
     public double calculateMedian(List<Rate> rates) {
         List<Double> rateValues = new ArrayList<>();
-        int count = 0;
+        int arraySize = rates.size()-1;
         for (Rate rate: rates) {
-            count ++;
             rateValues.add(rate.getMid());
         }
         Collections.sort(rateValues);
-        return count % 2 > 0 ? rateValues.get((count /2)) : (rateValues.get((count /2)) + rateValues.get((count/2)-1)) / 2;
+        return arraySize % 2 > 0 ? rateValues.get((arraySize /2)) : (rateValues.get((arraySize /2)) + rateValues.get((arraySize/2)-1)) / 2;
     }
 
     public Double calculateDominant(List<Rate> rates) {
@@ -111,14 +105,25 @@ public class CurrencyService {
         return sortedMap;
     }
 
-    public double calculateStandardVariation(List<Rate> rates) {
-        // TODO Jerry's implementation here
-        return calculateMedian(rates) - 0.2;
+    public double calculateMean(List<Rate> rates) {
+        Double sum = 0.0;
+        for (Rate rate: rates) {
+            sum += rate.getMid();
+        }
+        return sum / rates.size();
+    }
+
+    public double calculateStandardDeviation(List<Rate> rates) {
+        Double mean = calculateMean(rates);
+        Double temp = 0.0;
+        for (Rate rate : rates) {
+            temp += (rate.getMid()-mean)*(rate.getMid()-mean);
+        }
+        return temp/(rates.size()-1);
     }
 
     public double calculateCoefficientOfVariation(List<Rate> rates) {
-        // TODO Jerry's implementation
-        return new Random().nextDouble() - 0.5;
+        return calculateStandardDeviation(rates) / calculateMean(rates);
     }
 
     public SessionsDataPack calculateSessions(List<Rate> rates) {
