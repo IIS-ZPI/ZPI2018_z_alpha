@@ -6,10 +6,7 @@ import com.zpi.model.rate.Rate;
 import lombok.Getter;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class CurrencyService {
 
@@ -90,7 +87,36 @@ public class CurrencyService {
     }
 
     public double calculateCoefficientOfVariation(List<Rate> rates) {
-        // TODO Jerry's implementation here
-        return calculateMedian(rates) - 0.3;
+        // TODO Jerry's implementation
+        return new Random().nextDouble() - 0.5;
+    }
+
+    public SessionsDataPack calculateSessions(List<Rate> rates) {
+        SessionsDataPack sessionsDataPack = new SessionsDataPack();
+
+        double lastDiff = Double.MAX_VALUE;
+        Rate prev = rates.get(0);
+        for (int i = 1; i < rates.size(); i++) {
+            Rate rate = rates.get(i);
+
+            double diff = rate.getMid() - prev.getMid();
+            if (diff > 0) {
+                if (lastDiff <= 0 || lastDiff == Double.MAX_VALUE) {
+                    sessionsDataPack.riseSessions++;
+                }
+            } else if (diff < 0) {
+                if (lastDiff >= 0 || lastDiff == Double.MAX_VALUE) {
+                    sessionsDataPack.fallSessions++;
+                }
+            } else {
+                if (lastDiff != 0 || lastDiff == Double.MAX_VALUE) {
+                    sessionsDataPack.unchangedSessions++;
+                }
+            }
+
+            lastDiff = diff;
+            prev = rate;
+        }
+        return sessionsDataPack;
     }
 }
