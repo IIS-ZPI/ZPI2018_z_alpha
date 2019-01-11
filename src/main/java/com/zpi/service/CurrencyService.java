@@ -73,7 +73,7 @@ public class CurrencyService {
             rateValues.add(rate.getMid());
         }
         Collections.sort(rateValues);
-        return count % 2 > 0 ? rateValues.get((count /2) + 1) : rateValues.get(((count /2) + ((count/2)+1)) / 2);
+        return count % 2 > 0 ? rateValues.get((count /2)) : (rateValues.get((count /2)) + rateValues.get((count/2)-1)) / 2;
     }
 
     public double calculateDominant(List<Rate> rates) {
