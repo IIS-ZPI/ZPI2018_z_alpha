@@ -24,7 +24,7 @@ public class CurrencyServiceTest {
     private CurrencyService currencyService;
 
     @Test
-    public void getCurrenciesMethodShouldReturnListOfCurrenciesFetchedFromNbpRestClient() {
+    public void getCurrenciesMethodMockTest() {
         Mockito
                 .when(nbpRestClient.getAvailableCurrencies(Mockito.anyString()))
                 .thenReturn(getCurrenciesMock());
@@ -35,7 +35,7 @@ public class CurrencyServiceTest {
     }
 
     @Test
-    public void getRatesForTimePeriodShouldReturnRatesForSpecificTimePeriod() {
+    public void getRatesForTimePeriodMockTest() {
         Mockito
                 .when(nbpRestClient.getRatesForDatePeriod(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(getRatesForTimePeriodMock());
@@ -44,19 +44,54 @@ public class CurrencyServiceTest {
         Assert.assertNotNull(result);
     }
 
-    private List<Currency> getCurrenciesMock() {
-        List<Currency> currencies = new ArrayList<>();
-        currencies.add(Currency.builder().name("dolar amerykański").code("USD").mid(3.75).build());
-        currencies.add(Currency.builder().name("korona czeska").code("PLN").mid(0.16).build());
-        return currencies;
-    }
-
     @Test
     public void calculateSessionsTest() {
         SessionsDataPack sessionsDataPack = currencyService.calculateSessions(getRatesMock());
         Assert.assertEquals(3, sessionsDataPack.riseSessions);
         Assert.assertEquals(2, sessionsDataPack.fallSessions);
         Assert.assertEquals(2, sessionsDataPack.unchangedSessions);
+    }
+
+    @Test
+    public void calculateMedianTest(){
+        List<Rate> median = getRatesMock();
+        double result = currencyService.calculateMedian(median);
+        Assert.assertEquals(3.0, result, 0.1);
+    }
+
+    @Test
+    public void calculateDominantTest(){
+        List<Rate> dominant = getRatesMock();
+        double result = currencyService.calculateDominant(dominant);
+        Assert.assertEquals(1.0, result, 0.1);
+    }
+
+    @Test
+    public void calculateMeanTest(){
+        List<Rate> dominant = getRatesMock();
+        double result = currencyService.calculateMean(dominant);
+        Assert.assertEquals(3.0, result, 0.1);
+    }
+
+    @Test
+    public void calculateStandardDeviationTest(){
+        List<Rate> dominant = getRatesMock();
+        double result = currencyService.calculateStandardDeviation(dominant);
+        Assert.assertEquals(1.5, result, 0.1);
+    }
+
+    @Test
+    public void calculateCoefficientOfVariationTest(){
+        List<Rate> dominant = getRatesMock();
+        double result = currencyService.calculateCoefficientOfVariation(dominant);
+        Assert.assertEquals(50, result, 0.1);
+    }
+
+    private List<Currency> getCurrenciesMock() {
+        List<Currency> currencies = new ArrayList<>();
+        currencies.add(Currency.builder().name("dolar amerykański").code("USD").mid(3.75).build());
+        currencies.add(Currency.builder().name("korona czeska").code("PLN").mid(0.16).build());
+        return currencies;
     }
 
     private List<Rate> getRatesMock() {
