@@ -35,6 +35,15 @@ public class CurrencyServiceTest {
     }
 
     @Test
+    public void getCurrenciesMethodPerformance(){
+        long t0 = System.currentTimeMillis();
+        getCurrenciesMethodMockTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 10);
+    }
+
+    @Test
     public void getRatesForTimePeriodMockTest() {
         Mockito
                 .when(nbpRestClient.getRatesForDatePeriod(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
@@ -45,11 +54,30 @@ public class CurrencyServiceTest {
     }
 
     @Test
+    public void getRatesForTimePeriodPerformance(){
+        long t0 = System.currentTimeMillis();
+        getRatesForTimePeriodMockTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 100);
+    }
+
+
+    @Test
     public void calculateSessionsTest() {
         SessionsDataPack sessionsDataPack = currencyService.calculateSessions(getRatesMock());
         Assert.assertEquals(3, sessionsDataPack.riseSessions);
         Assert.assertEquals(2, sessionsDataPack.fallSessions);
         Assert.assertEquals(2, sessionsDataPack.unchangedSessions);
+    }
+
+    @Test
+    public void calculateSessionsPerformance(){
+        long t0 = System.currentTimeMillis();
+        calculateSessionsTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 10);
     }
 
     @Test
@@ -60,10 +88,28 @@ public class CurrencyServiceTest {
     }
 
     @Test
+    public void calculateMedianPerformance(){
+        long t0 = System.currentTimeMillis();
+        calculateMedianTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 10);
+    }
+
+    @Test
     public void calculateDominantTest(){
         List<Rate> dominant = getRatesMock();
         double result = currencyService.calculateDominant(dominant);
         Assert.assertEquals(1.0, result, 0.1);
+    }
+
+    @Test
+    public void calculateDominantPerformance(){
+        long t0 = System.currentTimeMillis();
+        calculateDominantTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 10);
     }
 
     @Test
@@ -74,6 +120,15 @@ public class CurrencyServiceTest {
     }
 
     @Test
+    public void calculateMeanPerformance(){
+        long t0 = System.currentTimeMillis();
+        calculateMeanTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 10);
+    }
+
+    @Test
     public void calculateStandardDeviationTest(){
         List<Rate> dominant = getRatesMock();
         double result = currencyService.calculateStandardDeviation(dominant);
@@ -81,10 +136,28 @@ public class CurrencyServiceTest {
     }
 
     @Test
+    public void calculateStandardDeviationPerformance(){
+        long t0 = System.currentTimeMillis();
+        calculateStandardDeviationTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 10);
+    }
+
+    @Test
     public void calculateCoefficientOfVariationTest(){
         List<Rate> dominant = getRatesMock();
         double result = currencyService.calculateCoefficientOfVariation(dominant);
         Assert.assertEquals(50, result, 0.1);
+    }
+
+    @Test
+    public void calculateCoefficientOfVariationPerformance(){
+        long t0 = System.currentTimeMillis();
+        calculateCoefficientOfVariationTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 10);
     }
 
     private List<Currency> getCurrenciesMock() {
