@@ -29,6 +29,7 @@ public class Main extends Application {
 	private static final int SCENE_WIDTH = 1000;
 	private static final int SCENE_HEIGHT = 600;
 	private static final String DEFAULT_CURRENCY = "USD";
+	private static final String DEFAULT_SECOND_CURRENCY = "EUR";
 	private static final String TITLE = "Kursy walut";
 
 	private static final String SERIES_MEDIAN = "mediana";
@@ -39,6 +40,7 @@ public class Main extends Application {
 	private LineChart<String, Double> lineChart;
 	private PieChart pieChart;
 	private ChoiceBox<Currency> choiceBoxCurrencies;
+	private ChoiceBox<Currency> choiceBoxSecondCurrencies;
 	private ChoiceBox<TimePeriod> choiceBoxDates;
 	private CheckBox checkBoxMedian;
 	private CheckBox checkBoxDominant;
@@ -75,6 +77,7 @@ public class Main extends Application {
 		lineChart = (LineChart<String, Double>) scene.lookup("#linechart_currency_rates");
 		pieChart = (PieChart) scene.lookup("#piechart_sessions");
 		choiceBoxCurrencies = (ChoiceBox<Currency>) scene.lookup("#choicebox_currencies");
+		choiceBoxSecondCurrencies = (ChoiceBox<Currency>) scene.lookup("#choicebox_second_currencies");
 		choiceBoxDates = (ChoiceBox<TimePeriod>) scene.lookup("#choicebox_time_periods");
 		checkBoxMedian = (CheckBox) scene.lookup("#checkbox_median");
 		checkBoxDominant = (CheckBox)  scene.lookup("#checkbox_dominant");
@@ -99,18 +102,28 @@ public class Main extends Application {
 	}
 
 	private void initChoiceBoxes() {
-		initCurrenciesChoiceBox();
+		List<Currency> currencies = currencyService.getCurrencies();
+		initCurrenciesChoiceBox(currencies);
+		initSecondCurrenciesChoiceBox(currencies);
 		initDatesChoiceBox();
 	}
 
-	private void initCurrenciesChoiceBox() {
-		List<Currency> currencies = currencyService.getCurrencies();
+	private void initCurrenciesChoiceBox(List<Currency> currencies) {
 		choiceBoxCurrencies.setValue(currencies.stream()
 				.filter(currency -> currency.getCode().equalsIgnoreCase(DEFAULT_CURRENCY))
 				.findFirst().orElseThrow(() -> new RuntimeException("Currency '" + DEFAULT_CURRENCY + "' not found!")));
 		choiceBoxCurrencies.setItems(FXCollections.observableArrayList(currencies));
 		choiceBoxCurrencies.getSelectionModel().selectedItemProperty()
 				.addListener((observable, oldValue, newValue) -> updateRatesChart());
+	}
+
+	private void initSecondCurrenciesChoiceBox(List<Currency> currencies) {
+		choiceBoxSecondCurrencies.setValue(currencies.stream()
+				.filter(currency -> currency.getCode().equalsIgnoreCase(DEFAULT_SECOND_CURRENCY))
+				.findFirst().orElseThrow(() -> new RuntimeException("Currency '" + DEFAULT_SECOND_CURRENCY + "' not found!")));
+		choiceBoxSecondCurrencies.setItems(FXCollections.observableArrayList(currencies));
+		choiceBoxSecondCurrencies.getSelectionModel().selectedItemProperty()
+				.addListener((observable, oldValue, newValue) -> updateDistributionChanges());
 	}
 
 	private void initDatesChoiceBox() {
@@ -188,6 +201,10 @@ public class Main extends Application {
 		polygonCoefficientOfVariation.setFill(value >= 0 ? Paint.valueOf("lime") : Paint.valueOf("red"));
 		labelCoefficientOfVariation.setTextFill(value >= 0 ? Paint.valueOf("green") : Paint.valueOf("red"));
 		labelCoefficientOfVariation.setText(String.format("%.4f", value) + "%");
+	}
+
+	private void updateDistributionChanges() {
+
 	}
 
 	private XYChart.Series<String, Double> createValueMarkerSeries(String name, List<Rate> cachedRates, double value) {

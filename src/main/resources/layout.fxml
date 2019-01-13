@@ -12,6 +12,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
@@ -128,7 +129,7 @@
                     <content>
                         <VBox alignment="TOP_RIGHT" prefWidth="800.0">
                             <children>
-                                <LineChart id="linechart_currency_rates" createSymbols="false" legendSide="RIGHT" prefWidth="800.0" animated="false">
+                                <LineChart id="linechart_currency_rates" animated="false" createSymbols="false" legendSide="RIGHT" prefWidth="800.0">
                                     <xAxis>
                                         <CategoryAxis side="BOTTOM" />
                                     </xAxis>
@@ -207,6 +208,27 @@
                             </padding>
                         </HBox>
                     </content></Tab>
+            <Tab text="Rozkład">
+               <content>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="Druga waluta">
+                           <VBox.margin>
+                              <Insets bottom="4.0" />
+                           </VBox.margin>
+                           <padding>
+                              <Insets left="8.0" top="8.0" />
+                           </padding>
+                        </Label>
+                        <ChoiceBox id="choicebox_second_currencies" prefWidth="200.0">
+                           <VBox.margin>
+                              <Insets bottom="16.0" left="8.0" />
+                           </VBox.margin></ChoiceBox>
+                        <StackPane prefHeight="405.0" prefWidth="800.0" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
             </tabs>
         </TabPane>
     </children>
