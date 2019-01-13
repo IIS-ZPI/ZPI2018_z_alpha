@@ -55,6 +55,19 @@ public class CurrencyService {
         return rates;
     }
 
+    public List<Rate> getRatesOfTwoCurrenciesForTimePeriod(String code1, String code2, TimePeriod timePeriod){
+        List<Rate> resultRates = new ArrayList<>();
+        List<Rate> firstRates = getRatesForTimePeriod(code1, timePeriod);
+        List<Rate> secondRates = getRatesForTimePeriod(code2, timePeriod);
+        for( int i = 0 ; i < firstRates.size(); i++) {
+            Rate rate = new Rate("No", firstRates.get(i).getEffectiveDate(), firstRates.get(i).getMid()/secondRates.get(i).getMid());
+            resultRates.add(rate);
+        }
+        return resultRates;
+    }
+
+
+
     private String prepareDate(Date date) {
         SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
         return format.format(date);
@@ -121,6 +134,8 @@ public class CurrencyService {
         }
         return temp/(rates.size()-1);
     }
+
+
 
     public Double calculateCoefficientOfVariation(List<Rate> rates) {
         return calculateStandardDeviation(rates) / calculateMean(rates) * 100;
