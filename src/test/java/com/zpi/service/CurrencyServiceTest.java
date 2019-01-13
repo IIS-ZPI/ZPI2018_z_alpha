@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CurrencyServiceTest {
@@ -67,8 +68,8 @@ public class CurrencyServiceTest {
         Mockito
                 .when(nbpRestClient.getRatesForDatePeriod(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(getRatesForTimePeriodMock());
-
-        List<Rate> result = currencyService.getRatesOfTwoCurrenciesForTimePeriod("usd", "eur", TimePeriod.WEEK);
+        currencyService.setCachedRates(getSecondRatesForTimePeriodMock());
+        List<Rate> result = currencyService.getRatesOfTwoCurrenciesForTimePeriod( "eur", TimePeriod.WEEK);
         Assert.assertNotNull(result);
     }
 
@@ -79,6 +80,26 @@ public class CurrencyServiceTest {
         long t1 = System.currentTimeMillis() - t0;
 
         Assert.assertTrue(t1 <= 100);
+    }
+
+    @Test
+    public void getDistributionChangesForTwoCurrenciesTest(){
+        Mockito
+                .when(nbpRestClient.getRatesForDatePeriod(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getRatesForTimePeriodMock());
+        currencyService.setCachedRates(getSecondRatesForTimePeriodMock());
+        Map<String, Integer> result = currencyService.getDistributionChangesForTwoCurrencies( "eur", TimePeriod.WEEK);
+
+        Assert.assertNotNull(result);
+    }
+
+    @Test
+    public void getDistributionChangesForTwoCurrenciesPerformance(){
+        long t0 = System.currentTimeMillis();
+        getDistributionChangesForTwoCurrenciesTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 10);
     }
 
     @Test
@@ -181,7 +202,7 @@ public class CurrencyServiceTest {
     private List<Currency> getCurrenciesMock() {
         List<Currency> currencies = new ArrayList<>();
         currencies.add(Currency.builder().name("dolar amerykański").code("USD").mid(3.75).build());
-        currencies.add(Currency.builder().name("korona czeska").code("PLN").mid(0.16).build());
+        currencies.add(Currency.builder().name("euro").code("EUR").mid(0.16).build());
         return currencies;
     }
 
@@ -203,6 +224,12 @@ public class CurrencyServiceTest {
         List<Rate> rates = new ArrayList<>();
         rates.add(Rate.builder().no("2").effectiveDate("2019-01-10").mid(3.75).build());
         rates.add(Rate.builder().no("1").effectiveDate("2019-01-04").mid(0.16).build());
+        return rates;
+    }
+    private List<Rate> getSecondRatesForTimePeriodMock() {
+        List<Rate> rates = new ArrayList<>();
+        rates.add(Rate.builder().no("2").effectiveDate("2019-01-10").mid(2.75).build());
+        rates.add(Rate.builder().no("1").effectiveDate("2019-01-04").mid(0.76).build());
         return rates;
     }
 }
