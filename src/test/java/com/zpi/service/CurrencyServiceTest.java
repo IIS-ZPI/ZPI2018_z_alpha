@@ -62,6 +62,25 @@ public class CurrencyServiceTest {
         Assert.assertTrue(t1 <= 100);
     }
 
+    @Test
+    public void getRatesOfTwoCurrenciesForTimePeriodMockTest(){
+        Mockito
+                .when(nbpRestClient.getRatesForDatePeriod(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(getRatesForTimePeriodMock());
+
+        List<Rate> result = currencyService.getRatesOfTwoCurrenciesForTimePeriod("usd", "eur", TimePeriod.WEEK);
+        System.out.println(result);
+        Assert.assertNotNull(result);
+    }
+
+    @Test
+    public void getRatesOfTwoCurrenciesForTimePeriodPerformance(){
+        long t0 = System.currentTimeMillis();
+        getRatesOfTwoCurrenciesForTimePeriodMockTest();
+        long t1 = System.currentTimeMillis() - t0;
+
+        Assert.assertTrue(t1 <= 100);
+    }
 
     @Test
     public void calculateSessionsTest() {
