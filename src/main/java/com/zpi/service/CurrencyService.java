@@ -4,20 +4,26 @@ import com.zpi.client.NbpRestClient;
 import com.zpi.model.currency.Currency;
 import com.zpi.model.rate.Rate;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class CurrencyService {
-
-    public static final long WEEK_TIME_MILLIS = 604800000L;
-    public static final long MONTH_TIME_MILLIS = 2592000000L;
-    public static final long YEAR_TIME_MILLIS = 31556952000L;
-    public static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final long WEEK_TIME_MILLIS = 604800000L;
+    private static final long MONTH_TIME_MILLIS = 2592000000L;
+    private static final long YEAR_TIME_MILLIS = 31556952000L;
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     private NbpRestClient nbpRestClient;
+
     @Getter
+    @Setter
     private List<Rate> cachedRates;
+
+    @Getter
+    @Setter
+    private List<Rate> cachedSecondRates;
 
     public CurrencyService(NbpRestClient nbpRestClient) {
         this.nbpRestClient = nbpRestClient;
@@ -51,7 +57,6 @@ public class CurrencyService {
                 break;
             default : break;
         }
-        cachedRates = rates;
         return rates;
     }
 
@@ -103,12 +108,7 @@ public class CurrencyService {
         List<Map.Entry<Double, Integer>> list =
                 new LinkedList<>(unsortMap.entrySet());
 
-        Collections.sort(list, new Comparator<Map.Entry<Double, Integer>>() {
-            public int compare(Map.Entry<Double, Integer> o1,
-                               Map.Entry<Double, Integer> o2) {
-                return (o1.getValue()).compareTo(o2.getValue());
-            }
-        });
+        list.sort(Comparator.comparing(o -> (o.getValue())));
 
         Map<Double, Integer> sortedMap = new LinkedHashMap<>();
         for (Map.Entry<Double, Integer> entry : list) {
@@ -119,7 +119,7 @@ public class CurrencyService {
     }
 
     public double calculateMean(List<Rate> rates) {
-        Double sum = 0.0;
+        double sum = 0.0;
         for (Rate rate: rates) {
             sum += rate.getMid();
         }
@@ -127,14 +127,13 @@ public class CurrencyService {
     }
 
     public double calculateStandardDeviation(List<Rate> rates) {
-        Double mean = calculateMean(rates);
-        Double temp = 0.0;
+        double mean = calculateMean(rates);
+        double temp = 0.0;
         for (Rate rate : rates) {
             temp += (rate.getMid()-mean)*(rate.getMid()-mean);
         }
         return temp/(rates.size()-1);
     }
-
 
 
     public Double calculateCoefficientOfVariation(List<Rate> rates) {

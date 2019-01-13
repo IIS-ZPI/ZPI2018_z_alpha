@@ -220,8 +220,9 @@ public class Main extends Application {
 	}
 
 	private List<XYChart.Data<String, Double>> fetchData(Currency currency, TimePeriod timePeriod) {
-		return currencyService
-				.getRatesForTimePeriod(currency.getCode(), timePeriod).stream()
+		List<Rate> rates = currencyService.getRatesForTimePeriod(currency.getCode(), timePeriod);
+		currencyService.setCachedRates(rates);
+		return rates.stream()
 				.map(rate -> new XYChart.Data<>(rate.getEffectiveDate(), rate.getMid()))
 				.collect(Collectors.toList());
 	}
