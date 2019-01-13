@@ -21,10 +21,6 @@ public class CurrencyService {
     @Setter
     private List<Rate> cachedRates;
 
-    @Getter
-    @Setter
-    private List<Rate> cachedSecondRates;
-
     public CurrencyService(NbpRestClient nbpRestClient) {
         this.nbpRestClient = nbpRestClient;
     }
@@ -60,7 +56,7 @@ public class CurrencyService {
         return rates;
     }
 
-    public List<Rate> getRatesOfTwoCurrenciesForTimePeriod(String code1, String code2, TimePeriod timePeriod){
+    List<Rate> getRatesOfTwoCurrenciesForTimePeriod(String code1, String code2, TimePeriod timePeriod){
         List<Rate> resultRates = new ArrayList<>();
         List<Rate> firstRates = getRatesForTimePeriod(code1, timePeriod);
         List<Rate> secondRates = getRatesForTimePeriod(code2, timePeriod);
@@ -70,7 +66,6 @@ public class CurrencyService {
         }
         return resultRates;
     }
-
 
 
     private String prepareDate(Date date) {
@@ -118,7 +113,7 @@ public class CurrencyService {
         return sortedMap;
     }
 
-    public double calculateMean(List<Rate> rates) {
+    double calculateMean(List<Rate> rates) {
         double sum = 0.0;
         for (Rate rate: rates) {
             sum += rate.getMid();
