@@ -69,7 +69,6 @@ public class CurrencyServiceTest {
                 .thenReturn(getRatesForTimePeriodMock());
 
         List<Rate> result = currencyService.getRatesOfTwoCurrenciesForTimePeriod("usd", "eur", TimePeriod.WEEK);
-        System.out.println(result);
         Assert.assertNotNull(result);
     }
 
