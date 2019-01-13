@@ -26,8 +26,7 @@ public class CurrencyService {
     }
 
     public List<Currency> getCurrencies() {
-        List<Currency> currencies = nbpRestClient.getAvailableCurrencies("a");
-        return currencies;
+        return nbpRestClient.getAvailableCurrencies("a");
     }
 
     public List<Rate> getRatesForTimePeriod(String code, TimePeriod timePeriod) {
