@@ -56,24 +56,23 @@ public class CurrencyService {
         return rates;
     }
 
-    List<Rate> getRatesOfTwoCurrenciesForTimePeriod(String code1, String code2, TimePeriod timePeriod){
+    List<Rate> getRatesOfTwoCurrenciesForTimePeriod(String code, TimePeriod timePeriod){
         List<Rate> resultRates = new ArrayList<>();
-        List<Rate> firstRates = getRatesForTimePeriod(code1, timePeriod);
-        List<Rate> secondRates = getRatesForTimePeriod(code2, timePeriod);
-        for( int i = 0 ; i < firstRates.size(); i++) {
-            Rate rate = new Rate("No", firstRates.get(i).getEffectiveDate(), firstRates.get(i).getMid()/secondRates.get(i).getMid());
+        List<Rate> rates = getRatesForTimePeriod(code, timePeriod);
+        for( int i = 0 ; i < cachedRates.size(); i++) {
+            Rate rate = new Rate("No", cachedRates.get(i).getEffectiveDate(), cachedRates.get(i).getMid()/rates.get(i).getMid());
             resultRates.add(rate);
         }
         return resultRates;
     }
 
-    public Map<Rate, Integer> getDistributionChangesForTwoCurrencies(String code1, String code2, TimePeriod timeperiod) {
-        List<Rate> rates = getRatesOfTwoCurrenciesForTimePeriod(code1, code2, timeperiod);
-        Map<Rate, Integer> resultMap = new HashMap<>();
+    public Map<String, Integer> getDistributionChangesForTwoCurrencies(String code, TimePeriod timeperiod) {
+        List<Rate> rates = getRatesOfTwoCurrenciesForTimePeriod(code, timeperiod);
+        Map<String, Integer> resultMap = new HashMap<>();
         for(int i = 1; i < rates.size();i++ ) {
             Double actualRate = rates.get(i).getMid();
             Double pastRate = rates.get(i-1).getMid();
-            resultMap.put(rates.get(i), (int) Math.round(actualRate-pastRate*10000));
+            resultMap.put(rates.get(i).getEffectiveDate(), (int) Math.round((actualRate-pastRate)*10000));
         }
         return resultMap;
     }

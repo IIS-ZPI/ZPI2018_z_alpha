@@ -2,6 +2,7 @@
 
 <?import java.lang.Double?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -12,7 +13,6 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
@@ -224,7 +224,14 @@
                            <VBox.margin>
                               <Insets bottom="16.0" left="8.0" />
                            </VBox.margin></ChoiceBox>
-                        <StackPane prefHeight="405.0" prefWidth="800.0" />
+                        <BarChart id="barchart_distributions" animated="false">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </BarChart>
                      </children>
                   </VBox>
                </content>

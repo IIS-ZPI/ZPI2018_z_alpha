@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -23,6 +24,8 @@ import com.zpi.service.TimePeriod;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Main extends Application {
@@ -39,6 +42,7 @@ public class Main extends Application {
 
 	private LineChart<String, Double> lineChart;
 	private PieChart pieChart;
+	private BarChart<String, Integer> barchartDistributions;
 	private ChoiceBox<Currency> choiceBoxCurrencies;
 	private ChoiceBox<Currency> choiceBoxSecondCurrencies;
 	private ChoiceBox<TimePeriod> choiceBoxDates;
@@ -76,6 +80,7 @@ public class Main extends Application {
 	private void bindControls(Scene scene) {
 		lineChart = (LineChart<String, Double>) scene.lookup("#linechart_currency_rates");
 		pieChart = (PieChart) scene.lookup("#piechart_sessions");
+		barchartDistributions = (BarChart<String, Integer>) scene.lookup("#barchart_distributions");
 		choiceBoxCurrencies = (ChoiceBox<Currency>) scene.lookup("#choicebox_currencies");
 		choiceBoxSecondCurrencies = (ChoiceBox<Currency>) scene.lookup("#choicebox_second_currencies");
 		choiceBoxDates = (ChoiceBox<TimePeriod>) scene.lookup("#choicebox_time_periods");
@@ -140,6 +145,7 @@ public class Main extends Application {
 		lineChart.getData().add(createSeries(currency.getName(), fetchData(currency, timePeriod)));
 		updateStatisticSeries();
 		updateCoefficientOfVariation();
+		updateDistributionChanges();
 	}
 	private XYChart.Series<String, Double> createSeries(String name, List<XYChart.Data<String, Double>> ratesData) {
 		XYChart.Series<String, Double> series = new XYChart.Series<>(FXCollections.observableArrayList(ratesData));
@@ -204,6 +210,15 @@ public class Main extends Application {
 	}
 
 	private void updateDistributionChanges() {
+		barchartDistributions.getData().clear();
+		List<XYChart.Data<String, Integer>> data = currencyService
+				.getDistributionChangesForTwoCurrencies(choiceBoxSecondCurrencies.getValue().getCode(), choiceBoxDates.getValue()).entrySet().stream()
+				.map(entry -> new XYChart.Data<>(entry.getKey(), entry.getValue()))
+				.collect(Collectors.toList());
+		XYChart.Series<String, Integer> series = new XYChart.Series<>(FXCollections.observableArrayList(data));
+		series.setName(choiceBoxCurrencies.getValue().getCode() + " / " + choiceBoxSecondCurrencies.getValue().getCode());
+		barchartDistributions.getData().add(series);
+
 
 	}
 
