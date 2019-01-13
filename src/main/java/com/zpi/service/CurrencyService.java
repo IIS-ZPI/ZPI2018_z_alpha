@@ -66,6 +66,16 @@ public class CurrencyService {
         return resultRates;
     }
 
+    public Map<Rate, Integer> getDistributionChangesForTwoCurrencies(String code1, String code2, TimePeriod timeperiod) {
+        List<Rate> rates = getRatesOfTwoCurrenciesForTimePeriod(code1, code2, timeperiod);
+        Map<Rate, Integer> resultMap = new HashMap<>();
+        for(int i = 1; i < rates.size();i++ ) {
+            Double actualRate = rates.get(i).getMid();
+            Double pastRate = rates.get(i-1).getMid();
+            resultMap.put(rates.get(i), (int) Math.round(actualRate-pastRate*10000));
+        }
+        return resultMap;
+    }
 
 
     private String prepareDate(Date date) {
